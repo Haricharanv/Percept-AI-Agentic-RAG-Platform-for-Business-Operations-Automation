@@ -103,7 +103,8 @@ CREATE TABLE incidents (
     root_cause_tag  TEXT,
     service         TEXT,
     date            DATE,
-    doc_id          UUID REFERENCES documents(id)
+    doc_id          UUID REFERENCES documents(id),
+    content_hash    TEXT UNIQUE
 );
 
 CREATE TABLE incident_tickets (

@@ -22,6 +22,9 @@ from app.verticals.contract_tracking.scheduler import run_scheduled_contract_ing
 import app.verticals.internal_mobility.tools
 import app.verticals.internal_mobility.graph
 
+import app.verticals.post_incident.tools
+import app.verticals.post_incident.graph
+
 # Section 6.3: "A shared function, called on a timer via APScheduler,
 # scans each vertical's staging folder..." Interval is configurable
 # since this is a dev/demo project, not production — default kept
