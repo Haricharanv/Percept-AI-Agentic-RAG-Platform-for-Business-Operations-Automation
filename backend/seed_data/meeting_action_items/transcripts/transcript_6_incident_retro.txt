@@ -1,0 +1,9 @@
+Incident Retro — March 19th
+
+Present: Alex, Morgan, and the on-call rotation from the past week.
+
+The retro started by walking through what happened during Tuesday's scheduled maintenance window. Alex explained that the deployment pipeline connection timeout issue showed up yet again — this is now the third time it's come up, and it's becoming clear the earlier fixes were only ever addressing symptoms rather than the actual root cause. There was a more serious discussion this time about whether to treat it as a proper incident-worthy problem rather than a quick patch. The team agreed that another band-aid fix isn't acceptable at this point. Alex will fix the deployment pipeline connection timeout issue once more, but this time with a proper long-term fix rather than another patch, and will loop in another engineer to pair on root-causing it properly.
+
+Separately, Morgan brought up that since the new staging database got set up a couple weeks ago, several people on the analytics team have asked the same questions about how to request access to it. There's currently no documentation covering that at all. Morgan will write up a short internal doc explaining how to request and configure access to the new staging database, so the analytics team has something to reference for onboarding new members going forward.
+
+No other blockers were raised, and the retro wrapped up on time.

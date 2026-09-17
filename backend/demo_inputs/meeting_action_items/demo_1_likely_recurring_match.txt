@@ -1,0 +1,5 @@
+Weekly Sync — Demo
+
+Alex mentioned the deployment pipeline is throwing connection timeout errors again, this time affecting the nightly batch jobs specifically. Alex will investigate and fix the deployment pipeline connection timeout issue affecting the nightly batch jobs.
+
+Priya confirmed the client integration summary was well received and no further action is needed there for now.

@@ -1,5 +1,9 @@
 Follow-up Engineering Sync — March 10th
 
-Alex reported that the earlier fix didn't fully resolve things — there's still a connection timeout issue in the deployment pipeline showing up under load. Alex will fix the deployment pipeline connection timeout issue again, this time addressing the load-related case specifically.
+Present: Alex, Morgan, and the usual platform team folks.
 
-Morgan brought up that the onboarding documentation for new engineers is out of date, referencing the old deployment process. Morgan volunteered to update the onboarding documentation.
+Alex opened with an update on the deployment pipeline fix from last week. Unfortunately, it turns out the earlier fix only addressed part of the problem — there's still a connection timeout issue in the deployment pipeline, and this time it's specifically showing up under load, which wasn't fully reproduced in the original testing. Alex walked through what they'd found so far: it seems like the timeout threshold itself might need adjusting, not just the retry logic from before. After some discussion about whether to bring in someone else to help, Alex decided to take another pass at it solo first. So, Alex will fix the deployment pipeline connection timeout issue again, this time specifically targeting the load-related failure case.
+
+Separately, Morgan raised a concern that's been bothering the team for a while — the onboarding documentation for new engineers is badly out of date. It still references the old deployment process from before the migration started, and a couple of new hires have apparently gotten confused by it recently. There was some discussion about whether this should wait until after the migration settles down, but the general feeling was that it's better to fix it sooner rather than let more new engineers hit the same confusion. Morgan volunteered to take this on and will update the onboarding documentation to reflect the current process.
+
+The team also spent a few minutes on general logistics — confirming who's covering on-call next week — but nothing else came out of that as an action item.

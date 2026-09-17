@@ -165,7 +165,11 @@ def _insert_incident(metadata: dict, doc_id: str | None, content_hash: str) -> s
 _ANALYSIS_SYSTEM_PROMPT = """\
 You are a post-incident analysis agent for an engineering organization. \
 Your job is to analyze a postmortem report, identify root cause patterns, \
+<<<<<<< HEAD
 check for recurring issues against historical incidents, and recommend remediation actions.
+=======
+check for recurring issues, and recommend remediation actions.
+>>>>>>> upstream/dev
 
 You have access to these tools:
 - lookup_incidents_by_service: find past incidents for a specific service
@@ -173,6 +177,7 @@ You have access to these tools:
 - create_incident_ticket: create a remediation/follow-up ticket
 
 Workflow:
+<<<<<<< HEAD
 1. Examine the retrieved context from past incidents in the knowledge base. This contains the most relevant historical incidents across all services.
 2. Use lookup_incidents_by_service to check if this specific service has had issues before, and get_incident_details if relevant.
 3. Evaluate historical precedents across the retrieved context:
@@ -188,6 +193,20 @@ Respond ONLY with strict JSON in this exact shape, no other text:
   "ticket_title": "<descriptive title for remediation ticket, or empty string if not creating>",
   "linked_incident_ids": [<list of historical incident UUIDs, or empty list>],
   "analysis_summary": "<summary of analysis, precedents found, and rationale>"
+=======
+1. Read the postmortem and retrieved context carefully.
+2. Use lookup_incidents_by_service to check if this service has had issues before.
+3. If you find related past incidents, use get_incident_details on the most relevant.
+4. Based on your analysis, decide if a remediation ticket should be created.
+
+Respond ONLY with strict JSON in this exact shape, no other text:
+{
+  "confidence": <float 0.0-1.0 — your confidence that a remediation ticket is warranted>,
+  "should_create_ticket": <true/false>,
+  "ticket_title": "<descriptive title for the remediation ticket, or empty string if not creating>",
+  "linked_incident_ids": [<list of historical incident UUIDs to link, or empty list>],
+  "analysis_summary": "<brief summary of your analysis and reasoning>"
+>>>>>>> upstream/dev
 }
 """
 
@@ -196,6 +215,7 @@ Respond ONLY with strict JSON in this exact shape, no other text:
 # Finalize node — parse LLM output and apply confidence gate
 # -------------------------------------------------------------------
 
+<<<<<<< HEAD
 def _extract_json(raw: str | None) -> dict:
     if not raw:
         raise ValueError("Empty LLM output")
@@ -210,22 +230,36 @@ def _extract_json(raw: str | None) -> dict:
     return json.loads(text)
 
 
+=======
+>>>>>>> upstream/dev
 def finalize_node(state: AgentState) -> AgentState:
     """Vertical-specific: parses post-incident LLM output and applies
     the confidence gate."""
     try:
+<<<<<<< HEAD
         parsed = _extract_json(state.get("llm_content"))
+=======
+        parsed = json.loads(state["llm_content"])
+>>>>>>> upstream/dev
         confidence = float(parsed.get("confidence", 0.0))
         should_act = bool(parsed.get("should_create_ticket", False))
         ticket_title = parsed.get("ticket_title", "")
         linked_ids = parsed.get("linked_incident_ids", [])
         analysis = parsed.get("analysis_summary", "")
+<<<<<<< HEAD
     except Exception as e:
+=======
+    except (json.JSONDecodeError, KeyError, TypeError, ValueError):
+>>>>>>> upstream/dev
         confidence = 0.0
         should_act = False
         ticket_title = ""
         linked_ids = []
+<<<<<<< HEAD
         analysis = f"Failed to parse LLM output: {e}"
+=======
+        analysis = "Failed to parse LLM output."
+>>>>>>> upstream/dev
 
     action_args = None
     if should_act and ticket_title:
@@ -306,6 +340,7 @@ def run_post_incident_vertical(agent_input: AgentRunInput) -> AgentRunOutput:
     # --- Parse metadata from header ---
     metadata = _parse_header_metadata(input_text)
 
+<<<<<<< HEAD
     # --- Run the LangGraph pipeline ---
     initial_state: AgentState = {
         "run_id": run_id,
@@ -325,6 +360,9 @@ def run_post_incident_vertical(agent_input: AgentRunInput) -> AgentRunOutput:
     if existing_id is None:
         _insert_incident(metadata, doc_id, c_hash)
 
+=======
+    # --- Chunk and embed into KB ---
+>>>>>>> upstream/dev
     chunks = section_chunker(input_text)
     for chunk in chunks:
         upsert_embedding(
@@ -339,6 +377,28 @@ def run_post_incident_vertical(agent_input: AgentRunInput) -> AgentRunOutput:
             },
         )
 
+<<<<<<< HEAD
+=======
+    # --- Insert incident row (deduplicated) ---
+    c_hash = _content_hash(input_text)
+    existing_id = _find_existing_incident(c_hash)
+    if existing_id is None:
+        _insert_incident(metadata, doc_id, c_hash)
+
+    # --- Run the LangGraph pipeline ---
+    initial_state: AgentState = {
+        "run_id": run_id,
+        "vertical": agent_input.vertical,
+        "source_type": "postmortem",
+        "input_text": input_text,
+        "system_prompt": _ANALYSIS_SYSTEM_PROMPT,
+        "confidence_threshold": ACTION_THRESHOLD,
+    }
+
+    graph = build_post_incident_graph()
+    final_state = graph.invoke(initial_state)
+
+>>>>>>> upstream/dev
     return build_agent_run_output(final_state)
 
 

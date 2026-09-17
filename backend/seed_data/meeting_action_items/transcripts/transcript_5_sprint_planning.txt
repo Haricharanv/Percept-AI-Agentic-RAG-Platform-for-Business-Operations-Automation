@@ -1,0 +1,9 @@
+Sprint Planning — March 17th
+
+Present: full team.
+
+The planning session started with a look at what's carrying over from last sprint versus new work. One thing that came up was API versioning — apparently two different teams have independently started making breaking changes to the payments service without coordinating, which has already caused some confusion downstream. The team agreed this needs a clearer policy before it causes a real incident. After some back and forth about who's best positioned to own it, Priya agreed to take the lead. Priya will draft the API versioning proposal for the payments service and circulate it for feedback.
+
+Jamie gave an update on the checkout flow work — the mockups have been through a round of review now, and there's a solid list of feedback to work through, including some accessibility notes that came up which hadn't been considered initially. Jamie is going to finalize the checkout flow design mockups, incorporating that feedback, particularly the accessibility items.
+
+The team also did a quick velocity check from last sprint — numbers looked reasonable, nothing alarming, so no action needed there. There was also some informal chat about whether to explore a new charting library at some point, but it stayed pretty vague and nobody picked it up as actual work.

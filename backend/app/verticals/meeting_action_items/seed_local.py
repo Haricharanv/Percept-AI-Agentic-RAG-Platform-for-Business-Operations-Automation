@@ -40,6 +40,7 @@ from pathlib import Path
 
 from app.core.db import get_connection
 from app.core.embeddings import upsert_embedding
+from app.core.ingestion import extract_text
 from app.schemas.agent_contract import AgentRunInput, TriggerType
 from app.verticals.meeting_action_items.graph import run_meeting_action_items
 
@@ -89,8 +90,18 @@ def _seed_transcripts() -> dict[str, int]:
     for file_path in sorted(TRANSCRIPTS_DIR.iterdir()):
         if not file_path.is_file():
             continue
+        if file_path.name.startswith("."):
+            # Skip dotfiles like .gitkeep — same defensive pattern
+            # ingest_staging_folder() already uses.
+            continue
 
-        text = file_path.read_text(encoding="utf-8")
+        # Uses the shared extract_text() (pdfplumber/python-docx/plain
+        # text, per extension) rather than a raw read_text() call —
+        # this was a real bug: read_text(encoding="utf-8") worked fine
+        # while every transcript was plain .txt, but broke the moment
+        # a .pdf/.docx transcript was added (UnicodeDecodeError trying
+        # to decode binary PDF/DOCX bytes as UTF-8 text).
+        text = extract_text(file_path)
         agent_input = AgentRunInput(
             vertical="meeting_action_items",
             trigger_type=TriggerType.UPLOAD,

@@ -1,0 +1,3 @@
+owner: morgan
+---
+Morgan wrote up a short internal doc explaining how to request and configure access to the new staging database, and shared it with the analytics team for onboarding new members.
