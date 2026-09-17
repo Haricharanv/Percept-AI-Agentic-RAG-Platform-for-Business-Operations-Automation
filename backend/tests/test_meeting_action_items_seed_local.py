@@ -302,3 +302,65 @@ def test_committed_owner_activity_files_all_have_valid_owner_header():
         owner, content = parse_owner_activity_file(f)
         assert owner
         assert content
+
+# ---------------------------------------------------------------
+# Regression test: _seed_transcripts() must use extract_text(), not
+# a raw read_text(encoding="utf-8") call
+# ---------------------------------------------------------------
+
+def test_seed_transcripts_uses_extract_text_not_raw_read(monkeypatch, tmp_path):
+    """
+    Real bug found in production: _seed_transcripts() previously
+    called file_path.read_text(encoding="utf-8") directly on every
+    file regardless of extension. This worked fine while every
+    transcript was plain .txt, but raised UnicodeDecodeError the
+    moment a real .pdf/.docx transcript was added (binary bytes
+    aren't valid UTF-8 text). Now routes through the shared
+    extract_text(), which correctly branches by file extension.
+    """
+    transcripts_dir = tmp_path / "transcripts"
+    transcripts_dir.mkdir()
+    # Non-UTF-8-decodable bytes with a .pdf extension — exactly what
+    # crashed the old implementation; a plain read_text() call on
+    # this file raises UnicodeDecodeError.
+    (transcripts_dir / "fake.pdf").write_bytes(b"\x93\x00\xff\xfe not valid utf-8")
+
+    monkeypatch.setattr(seed_local, "TRANSCRIPTS_DIR", transcripts_dir)
+
+    captured_calls = []
+
+    def fake_extract_text(file_path):
+        captured_calls.append(file_path)
+        return "extracted text stand-in"
+
+    monkeypatch.setattr(seed_local, "extract_text", fake_extract_text)
+
+    fake_output = AgentRunOutput(
+        run_id="fake-run-id", status="completed", confidence=1.0,
+        actions_taken=[], escalated=False,
+    )
+    monkeypatch.setattr(seed_local, "run_meeting_action_items", lambda agent_input: fake_output)
+
+    # Must NOT raise UnicodeDecodeError.
+    _seed_transcripts()
+
+    assert len(captured_calls) == 1
+    assert captured_calls[0].name == "fake.pdf"
+
+
+def test_seed_transcripts_skips_dotfiles(monkeypatch, tmp_path):
+    transcripts_dir = tmp_path / "transcripts"
+    transcripts_dir.mkdir()
+    (transcripts_dir / ".gitkeep").write_text("")
+
+    monkeypatch.setattr(seed_local, "TRANSCRIPTS_DIR", transcripts_dir)
+
+    called = []
+    monkeypatch.setattr(
+        seed_local, "run_meeting_action_items", lambda agent_input: called.append(1)
+    )
+
+    result = _seed_transcripts()
+
+    assert called == []
+    assert result == {}
