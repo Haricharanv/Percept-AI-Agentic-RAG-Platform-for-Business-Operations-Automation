@@ -57,3 +57,28 @@ The resolution: use real data where it exists and is public, and always add deli
 ## Mechanism Note
 
 Both real and synthetic files are placed together in `backend/seed_data/<vertical>/` and copied into staging by `seed.py`, which is itself the first-ingestion pathway (Section 6.4). `ingest_staging_folder()` treats every file identically regardless of origin — the hybrid nature lives entirely in *which files are curated into that folder*, not in any code-level distinction.
+
+## Demo Inputs vs. Seed Data (addendum)
+
+Two genuinely different things, kept in separate folders:
+
+- `backend/seed_data/<vertical>/` — goes INTO the KB automatically
+  (via `seed.py`). Never meant to be re-uploaded through the UI.
+- `backend/demo_inputs/<vertical>/` — curated files for manually
+  testing/demoing the Submit page. Never auto-ingested. Must be
+  genuinely new content, not copies of seed files — submitting a seed
+  file back to itself only proves a trivial near-1.0 self-match, not
+  real retrieval.
+
+Each vertical's `demo_inputs/` folder includes a `README.md`
+explaining what each file is expected to demonstrate. This
+explanation MUST live in the README, never as a comment inside the
+demo file itself — an inline note becomes part of the actual
+extracted/embedded content and can distort retrieval or extraction.
+
+## File-Type Diversity Requirement
+
+Each vertical's **seed data** (not demo inputs) must include at least
+one `.pdf` and one `.docx` file, alongside `.txt` — this is the only
+way to get real integration coverage of `extract_text()`'s PDF/DOCX
+branches beyond synthetic unit tests.
