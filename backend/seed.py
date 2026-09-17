@@ -67,6 +67,34 @@ def seed_vertical(vertical: str, source_type: str) -> None:
     print(f"  Ingested: processed={len(summary['processed'])}, "
           f"skipped={len(summary['skipped'])}, errors={summary['errors']}")
 
+    if vertical == "post_incident":
+        from app.verticals.post_incident.graph import _parse_header_metadata, _content_hash
+        from app.core.ingestion import extract_text
+        conn = get_connection()
+        synced_incidents = 0
+        try:
+            with conn.cursor() as cur:
+                for file in sorted(source_dir.iterdir()):
+                    if not file.is_file() or file.name.startswith("."):
+                        continue
+                    text = extract_text(file)
+                    meta = _parse_header_metadata(text)
+                    c_hash = _content_hash(text)
+                    cur.execute("SELECT id FROM incidents WHERE content_hash = %s LIMIT 1;", (c_hash,))
+                    if cur.fetchone() is None:
+                        cur.execute(
+                            """
+                            INSERT INTO incidents (title, root_cause_tag, service, date, doc_id, content_hash)
+                            VALUES (%s, %s, %s, %s, %s, %s);
+                            """,
+                            (meta["title"] or file.stem, meta["root_cause_tag"], meta["service"], meta["date"] or None, None, c_hash),
+                        )
+                        synced_incidents += 1
+            conn.commit()
+        finally:
+            conn.close()
+        print(f"  Synced {synced_incidents} relational incident row(s).")
+
 
 def seed_internal_mobility() -> None:
     """

@@ -8,9 +8,11 @@ import { submitRun, submitRunWithFile } from "../api/agentRuns";
 // core, and internal_mobility (Vertical 2, Section 8.2) matches employee
 // profiles to a posted role with a ranked leaderboard on the result page.
 const AVAILABLE_VERTICALS = [
-  { value: "dummy", label: "Dummy (test vertical)" },
+  { value: "post_incident", label: "Post-Incident Knowledge Synthesis (Vertical 1)" },
   { value: "internal_mobility", label: "Internal Mobility & Skill-Gap Matching" },
+  { value: "contract_tracking", label: "Contract Tracking & Obligation Extraction" },
   { value: "meeting_action_items", label: "Meeting Action Items" },
+  { value: "dummy", label: "Dummy (test vertical)" },
 ];
 
 function Submit() {
