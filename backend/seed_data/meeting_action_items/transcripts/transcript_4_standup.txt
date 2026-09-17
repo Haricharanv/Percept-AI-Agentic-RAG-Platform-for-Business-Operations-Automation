@@ -1,5 +1,9 @@
 Daily Standup — March 6th
 
-Morgan will set up the new staging database for the analytics team, since the current one is running out of space.
+Quick one today, just a few updates.
 
-Alex noted the deployment pipeline fix from earlier this week is holding up well so far, no update needed there.
+Morgan mentioned that the analytics team has been blocked for a couple of days because their current staging environment is basically out of space, and it's starting to slow down their testing. There was a quick back-and-forth about whether to just expand the existing database or provision a new one, and the team agreed a fresh one would be cleaner long-term. Morgan will set up the new staging database for the analytics team so they can get unblocked.
+
+Alex gave a brief update too — just noting that the deployment pipeline fix from earlier in the week seems to be holding up fine under normal traffic so far, no new issues to report. Nothing further needed there for now, just wanted to flag it as good news.
+
+Someone also mentioned the team lunch on Friday, but that's more of a social thing than anything work-related.

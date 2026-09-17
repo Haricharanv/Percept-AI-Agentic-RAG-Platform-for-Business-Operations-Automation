@@ -1,0 +1,9 @@
+Client Sync — March 21st
+
+Present: Priya, Jamie, and the account team.
+
+The call started with a status check ahead of next week's meeting with the client's technical stakeholders. There was some concern that the last update they received was a bit too high-level and didn't give them a clear picture of where the integration actually stands. The team agreed a more detailed summary would help set the right expectations going in. Priya will prepare a summary of the current integration status for the client's technical stakeholders ahead of that call, making sure to cover both what's done and what's still in progress.
+
+Jamie mentioned that the client had specifically asked to see the new checkout flow once it's further along, since it directly affects their end users. Given the mockups are close to final now, the team thought it made sense to put together something visual rather than just describing it verbally. Jamie will put together a short walkthrough of the new checkout flow for the client, once the design mockups are finalized.
+
+There was also some general discussion about the client's overall timeline expectations for the quarter, but nothing specific was committed to beyond what's already in motion — more of a level-setting conversation than anything actionable.

@@ -1,7 +1,11 @@
 Weekly Engineering Sync — March 3rd
 
-The team reviewed the current state of the payment service migration. Alex mentioned the staging environment tests are passing but flagged that the deployment pipeline still has a connection timeout issue that needs fixing before production rollout. Alex agreed to fix the deployment pipeline connection timeout issue by end of week.
+Present: Alex, Priya, and a few others from the platform team.
 
-Priya raised that the API rate limiting changes haven't been reviewed yet — there's a pull request open since Monday. Priya will review the API rate limiting pull request and leave feedback.
+The team started by going over the current state of the payment service migration, since that's been the main focus for the past two weeks. Alex gave a quick status update — staging environment tests have been passing consistently for a few days now, which is good progress. But Alex flagged something that came up during load testing: the deployment pipeline appears to have a connection timeout issue that only shows up under sustained traffic, and it hasn't fully been root-caused yet. There was some back and forth about whether this was related to the connection pool sizing or something else entirely — nobody was fully sure. Alex agreed to dig into it and said they'd own fixing the deployment pipeline connection timeout issue, aiming to have something in place by end of week so it doesn't block the production rollout.
 
-We also briefly discussed the upcoming security audit — nothing actionable yet, just awareness that it's coming next month.
+After that, the conversation moved to the API rate limiting changes. Priya mentioned that a pull request has been open since Monday and nobody's had a chance to look at it yet, partly because of how busy everyone's been with the migration work. A couple of people asked whether it was urgent, and the consensus was that it's not blocking anything immediately but shouldn't sit much longer either. Priya said she'd take care of reviewing the API rate limiting pull request and get feedback posted.
+
+There was also a brief mention of the upcoming security audit — someone from compliance had reached out about scheduling it for next month. The team acknowledged it but didn't get into specifics since there's nothing to prepare yet; it was really just a heads-up for awareness.
+
+Meeting wrapped up with a quick reminder about the team offsite planning, which is still in early stages and not assigned to anyone specifically yet.
