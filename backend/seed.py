@@ -17,6 +17,7 @@ not re-embedded, on subsequent runs.
 import shutil
 from pathlib import Path
 
+from app.core.db import get_connection
 from app.core.ingestion import ingest_staging_folder, STAGING_ROOT
 from app.verticals.contract_tracking.seed_local import seed_contract_tracking
 from app.verticals.internal_mobility.seed_local import seed_internal_mobility
