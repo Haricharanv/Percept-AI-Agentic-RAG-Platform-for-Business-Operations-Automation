@@ -136,4 +136,3 @@ def seed_post_incident() -> None:
         new_incidents += 1
 
     print(f"  Processed {new_incidents} new incident(s), {total_chunks} chunks embedded, {skipped} skipped (already seeded).")
-""", "Description": "seed_local.py mirrors graph.py's exact runtime persistence path: parse header, insert incident, section_chunker, upsert_embedding with source_id. This ensures seeded and runtime data are indistinguishable in the KB.", "Overwrite": false, "TargetFile": "C:\\Users\\haric\\OneDrive\\Desktop\\SEM 3\\MCA462N-Internship\\.gemini\\temp_repo\\backend\\app\\verticals\\post_incident\\seed_local.py
