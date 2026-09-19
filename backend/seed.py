@@ -17,11 +17,11 @@ not re-embedded, on subsequent runs.
 import shutil
 from pathlib import Path
 
-from app.core.db import get_connection
 from app.core.ingestion import ingest_staging_folder, STAGING_ROOT
 from app.verticals.contract_tracking.seed_local import seed_contract_tracking
 from app.verticals.internal_mobility.seed_local import seed_internal_mobility
 from app.verticals.meeting_action_items.seed_local import seed_meeting_action_items
+from app.verticals.post_incident.seed_local import seed_post_incident
 
 # Synthetic data committed to the repo under backend/seed_data/,
 # copied into each vertical's staging folder before ingestion. Only
@@ -39,9 +39,12 @@ SEED_DATA_ROOT = Path(__file__).parent / "seed_data"
 # the analysis trigger, so seeding must run the real extraction
 # pipeline, not generic chunk-and-embed) — see
 # app.verticals.contract_tracking.seed_local.
+# post_incident is handled by seed_post_incident() (dedicated
+# section-aware seeding — it must use the same section_chunker()
+# and source_id linkage as graph.py's runtime, not the generic
+# paragraph chunker), so it is intentionally absent here.
 VERTICALS_TO_SEED = [
     {"vertical": "dummy", "source_type": "postmortem"},
-    {"vertical": "post_incident", "source_type": "postmortem"},
 ]
 
 
@@ -66,33 +69,6 @@ def seed_vertical(vertical: str, source_type: str) -> None:
     print(f"  Ingested: processed={len(summary['processed'])}, "
           f"skipped={len(summary['skipped'])}, errors={summary['errors']}")
 
-    if vertical == "post_incident":
-        from app.verticals.post_incident.graph import _parse_header_metadata, _content_hash
-        from app.core.ingestion import extract_text
-        conn = get_connection()
-        synced_incidents = 0
-        try:
-            with conn.cursor() as cur:
-                for file in sorted(source_dir.iterdir()):
-                    if not file.is_file() or file.name.startswith("."):
-                        continue
-                    text = extract_text(file)
-                    meta = _parse_header_metadata(text)
-                    c_hash = _content_hash(text)
-                    cur.execute("SELECT id FROM incidents WHERE content_hash = %s LIMIT 1;", (c_hash,))
-                    if cur.fetchone() is None:
-                        cur.execute(
-                            """
-                            INSERT INTO incidents (title, root_cause_tag, service, date, doc_id, content_hash)
-                            VALUES (%s, %s, %s, %s, %s, %s);
-                            """,
-                            (meta["title"] or file.stem, meta["root_cause_tag"], meta["service"], meta["date"] or None, None, c_hash),
-                        )
-                        synced_incidents += 1
-            conn.commit()
-        finally:
-            conn.close()
-        print(f"  Synced {synced_incidents} relational incident row(s).")
 
 
 def main():
@@ -101,6 +77,12 @@ def main():
         print(f"\n{entry['vertical']}:")
         seed_vertical(entry["vertical"], entry["source_type"])
 
+
+    # post_incident uses section_chunker() + incident-linked source_id
+    # (mirrors graph.py's runtime persistence), not the generic
+    # staging-folder path.
+    print("\npost_incident:")
+    seed_post_incident()
 
     # meeting_action_items doesn't fit the generic staging-folder
     # pattern above (its KB content is a byproduct of real LLM
